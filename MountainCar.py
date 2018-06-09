@@ -1,5 +1,6 @@
 import numpy as np
 import gym
+import time
 from model import *
 from keras.models import load_model
 import argparse
@@ -12,7 +13,10 @@ def main():
                         help='input T/F to continue training the model')
     parser.add_argument('--modelPath',
                         default=None,
-                        help='input the path to the existed model')                    
+                        help='input the path to the existed model')
+    parser.add_argument('--plot',
+                        default=False,
+                        help='input T\F to generate some training process graph')                        
     args = parser.parse_args()
 
     env = gym.make('MountainCar-v0')
@@ -26,8 +30,9 @@ def main():
         model = agent.trainAgent()
         print("Model acc: {0:.3f}".format(agent.maxScsRate))
         
-        agent.plotLine()
-        agent.plotTwoScale(agent.plotAcc, agent.plotScsCnt)
+        if args.plot == True:
+            agent.plotLine()
+            agent.plotTwoScale(agent.plotAcc, agent.plotScsCnt)
         if model == None: 
             print("Train model failed...")
             return
@@ -38,10 +43,11 @@ def main():
             model = load_model(args.modelPath)
             acc = test(model)
             print("Model acc: {0:.3f} ".format(acc))
-            if acc >= 0.8: plotModelAction(model)
+            if acc >= 0.8 and args.plot == True: plotModelAction(model)
 
-    for _ in range(500):
+    for _ in range(1000):
         env.render()
+
         action = np.argmax(model.predict(state))
         nextState, _, _, _ = env.step(action)
 
@@ -52,6 +58,7 @@ def main():
             break
 
     if done == False: print("Didn't reach the top.")
+    time.sleep(3)
     env.close() 
 
 def test(model, rounds=500):
