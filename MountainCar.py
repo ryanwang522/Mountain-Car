@@ -28,7 +28,7 @@ def main():
     if args.train == True:
         agent = DQNAgent()
         model = agent.trainAgent()
-        print("Model acc: {0:.3f}".format(agent.maxScsRate))
+        print("Model accuracy: {0:.3f}".format(agent.maxScsRate))
         
         if args.plot == True:
             agent.plotLine()
@@ -42,7 +42,7 @@ def main():
         else: 
             model = load_model(args.modelPath)
             acc = test(model)
-            print("Model acc: {0:.3f} ".format(acc))
+            print("Model accuracy: {0:.3f} ".format(acc))
             if acc >= 0.8 and args.plot == True: plotModelAction(model)
 
     for _ in range(1000):
@@ -80,7 +80,7 @@ def test(model, rounds=500):
                 break
 
     env.close()
-    print("scscnt: {}".format(scsCnt))
+    print("Success count: {}".format(scsCnt))
     reachTopRate = scsCnt / rounds
     return reachTopRate
 
